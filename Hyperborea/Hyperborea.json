@@ -2,9 +2,9 @@
     "Author": "kawaii",
     "Name": "Hyperborea",
     "InternalName": "Hyperborea",
-    "Description": "Load and explore any zone in relative safety, mainly for taking GPoses in now inaccessible locations.",
-    "Punchline": "What if we GPosed in the Mordion Gaol?",
-    "RepoUrl": "https://github.com/kawaii/Hyperborea",
+    "Description": "以相對安全的方式載入並探索任意區域，主要用於在目前無法進入的地點拍攝團體姿勢。",
+    "Punchline": "如果能在莫迪翁監獄拍團體姿勢呢？",
+    "RepoUrl": "https://github.com/cycleapple/Hyperborea",
     "AcceptsFeedback": false,
     "DalamudApiLevel": 13
 }
