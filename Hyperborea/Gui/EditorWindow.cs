@@ -18,7 +18,7 @@ public unsafe class EditorWindow : Window
     Dictionary<string, HashSet<uint>> BgToTerritoryType = [];
     internal uint SelectedTerritory = 0;
     uint TerrID => SelectedTerritory == 0 ? Svc.ClientState.TerritoryType : SelectedTerritory;
-    public EditorWindow() : base("Hyperborea Zone Editor")
+    public EditorWindow() : base("Hyperborea 區域編輯器###Hyperborea Zone Editor")
     {
         EzConfigGui.WindowSystem.AddWindow(this);
         foreach(var x in Svc.Data.GetExcelSheet<TerritoryType>())
@@ -47,29 +47,29 @@ public unsafe class EditorWindow : Window
             {
                 ImGuiEx.Text(EColor.YellowBright, $"\uf0c7");
                 ImGui.PopFont();
-                ImGuiEx.Tooltip("Zone data is being loaded from your data overrides file.");
+                ImGuiEx.Tooltip("區域資料正從你的覆寫資料檔載入。");
             }
             else
             {
                 ImGuiEx.Text(EColor.GreenBright, $"\uf0c7");
                 ImGui.PopFont();
-                ImGuiEx.Tooltip("Zone data loaded from master data file.");
+                ImGuiEx.Tooltip("區域資料已從主要資料檔載入。");
             }
         }
         else
         {
             ImGuiEx.Text(EColor.RedBright, $"\uf0c7");
             ImGui.PopFont();
-            ImGuiEx.Tooltip("No configuration found for this zone in either the master or override data file(s).");
+            ImGuiEx.Tooltip("主要資料檔與覆寫資料檔中都找不到此區域的設定。");
         }
         ImGui.SetCursorPos(cur);
         var shares = BgToTerritoryType.TryGetValue(ExcelTerritoryHelper.GetBG(TerrID), out var set) ? set : [];
-        ImGuiEx.TextWrapped($"Currently editing: {ExcelTerritoryHelper.GetName(TerrID, true)}");
+        ImGuiEx.TextWrapped($"目前編輯：{ExcelTerritoryHelper.GetName(TerrID, true)}");
         if(shares.Count > 1)
         {
-            ImGuiComponents.HelpMarker($"Shares data with \n{shares.Where(z => z != TerrID).Select(z => ExcelTerritoryHelper.GetName(z, true)).Print("\n")}");
+            ImGuiComponents.HelpMarker($"與下列區域共用資料：\n{shares.Where(z => z != TerrID).Select(z => ExcelTerritoryHelper.GetName(z, true)).Print("\n")}");
         }
-        if (ImGuiComponents.IconButtonWithText((FontAwesomeIcon)0xf002, "Browse"))
+        if (ImGuiComponents.IconButtonWithText((FontAwesomeIcon)0xf002, "瀏覽###Browse"))
         {
             new TerritorySelector(SelectedTerritory, (_, x) =>
             {
@@ -77,7 +77,7 @@ public unsafe class EditorWindow : Window
             });
         }
         ImGui.SameLine();
-        if(ImGuiComponents.IconButtonWithText((FontAwesomeIcon)0xf276, "Current Zone"))
+        if(ImGuiComponents.IconButtonWithText((FontAwesomeIcon)0xf276, "目前區域###Current Zone"))
         {
             SelectedTerritory = 0;
         }
@@ -85,14 +85,14 @@ public unsafe class EditorWindow : Window
         var bg = ExcelTerritoryHelper.GetBG(TerrID);
         if (bg.IsNullOrEmpty())
         {
-            ImGuiEx.Text($"This zone is unsupported");
+            ImGuiEx.Text("不支援此區域");
         }
         else
         {
             if (Utils.TryGetZoneInfo(bg, out var info, out var isOverriden))
             {
                 var overrideSpawn = info.Spawn != null;
-                if (ImGui.Checkbox("Custom Spawn Point", ref overrideSpawn))
+                if (ImGui.Checkbox("自訂出生點###Custom Spawn Point", ref overrideSpawn))
                 {
                     info.Spawn = overrideSpawn ? new() : null;
                 }
@@ -105,22 +105,22 @@ public unsafe class EditorWindow : Window
                     UI.CoordBlock("Z:", ref info.Spawn.Z);
                     ImGui.SameLine();
                     if (ImGuiEx.IconButton("\uf3c5")) info.Spawn = Player.Object.Position.ToPoint3();
-                    ImGuiEx.Tooltip("Set the zone spawn point to your character's current location.");
+                    ImGuiEx.Tooltip("將區域出生點設為角色目前位置。");
                 }
                 ImGui.Separator();
-                ImGuiEx.TextV("Phases:");
+                ImGuiEx.TextV("階段：");
                 ImGui.SameLine();
                 if (ImGuiEx.IconButton(FontAwesome.Plus))
                 {
                     info.Phases.Add(new());
                 }
-                ImGuiEx.Tooltip($"Create a new phase.");
+                ImGuiEx.Tooltip("建立新階段。");
                 foreach (var p in info.Phases)
                 {
                     ImGui.PushID(p.GUID);
                     if (ImGui.CollapsingHeader($"{p.Name}###phase"))
                     {
-                        ImGuiEx.TextV($"Name:");
+                        ImGuiEx.TextV("名稱：");
                         ImGui.SameLine();
                         ImGui.SetNextItemWidth(150f);
                         ImGui.InputText($"##Name", ref p.Name, 20);
@@ -129,8 +129,8 @@ public unsafe class EditorWindow : Window
                         {
                             new TickScheduler(() => info.Phases.RemoveAll(z => z.GUID == p.GUID));
                         }
-                        ImGuiEx.Tooltip("Hold CTRL to delete this phase.");
-                        ImGuiEx.TextV($"Weather:");
+                        ImGuiEx.Tooltip("按住 Ctrl 即可刪除此階段。");
+                        ImGuiEx.TextV("天氣：");
                         ImGui.SameLine();
                         if (ImGui.BeginCombo("##Weather", $"{Utils.GetWeatherName(p.Weather)}"))
                         {
@@ -148,25 +148,25 @@ public unsafe class EditorWindow : Window
                             }
                             ImGui.EndCombo();
                         }
-                        ImGuiEx.TextV($"MapEffects:");
+                        ImGuiEx.TextV("地圖效果：");
                         ImGui.SameLine();
                         if (ImGuiEx.IconButton(FontAwesome.Plus))
                         {
                             p.MapEffects.Add(new());
                         }
-                        ImGuiEx.Tooltip("Add a new MapEffect.");
+                        ImGuiEx.Tooltip("新增地圖效果。");
                         ImGui.SameLine();
                         if (ImGuiEx.IconButton(FontAwesomeIcon.Copy))
                         {
                             Copy(P.YamlFactory.Serialize(p.MapEffects, true));
                         }
-                        ImGuiEx.Tooltip("Copy the configured MapEffects for this phase.");
+                        ImGuiEx.Tooltip("複製此階段設定的地圖效果。");
                         ImGui.SameLine();
                         if (ImGuiEx.IconButton(FontAwesomeIcon.Paste))
                         {
                             Safe(() => p.MapEffects = P.YamlFactory.Deserialize<List<MapEffectInfo>>(Paste()));
                         }
-                        ImGuiEx.Tooltip("Paste and override MapEffects into this phase.");
+                        ImGuiEx.Tooltip("貼上並覆寫此階段的地圖效果。");
                         foreach (var x in p.MapEffects)
                         {
                             ImGui.PushID(x.GUID);
@@ -179,7 +179,7 @@ public unsafe class EditorWindow : Window
                             ImGui.SetNextItemWidth(100f);
                             ImGui.InputInt($"##a3", ref x.a3);
                             ImGui.SameLine();
-                            if (ImGui.Button("Delete"))
+                            if (ImGui.Button("刪除###Delete"))
                             {
                                 new TickScheduler(() => p.MapEffects.RemoveAll(z => z.GUID == x.GUID));
                             }
@@ -188,14 +188,14 @@ public unsafe class EditorWindow : Window
                     }
                     ImGui.PopID();
                 }
-                if (ImGui.Button("Save"))
+                if (ImGui.Button("儲存###Save"))
                 {
                     Utils.CreateZoneInfoOverride(bg, info.JSONClone(), true);
                     P.SaveZoneData();
                 }
                 if(isOverriden)
                 {
-                    if(ImGui.Button("Reset"))
+                    if(ImGui.Button("重設###Reset"))
                     {
                         Utils.LoadBuiltInZoneData();
                         new TickScheduler(() =>
@@ -208,8 +208,8 @@ public unsafe class EditorWindow : Window
             }
             else
             {
-                ImGuiEx.Text($"No data found");
-                if (ImGui.Button("Create override"))
+                ImGuiEx.Text("找不到資料");
+                if (ImGui.Button("建立覆寫資料###Create override"))
                 {
                     Utils.CreateZoneInfoOverride(bg, new()
                     {
