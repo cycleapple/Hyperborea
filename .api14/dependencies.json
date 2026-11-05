@@ -3,6 +3,6 @@
     "path": "ECommons",
     "baseCommit": "ed708360bd97b82323d631f55e02ce19a2ba5c53",
     "patch": "patches/e347001520b30beb.patch",
-    "sha256": "068b50d6731067202f77a9753856659b1edc165061a1b53181c16b9b268186cf"
+    "sha256": "f45c572a3d7ea971b896311a93a4016d1e8b39b28379d9ad6aa54aa2edc43607"
   }
 ]
